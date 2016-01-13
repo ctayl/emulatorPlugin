@@ -1,1 +1,1 @@
-# emulatorPlugin ![](https://api.travis-ci.org/BuildFire/emulatorPlugin.svg)
+# AppPreviewPlugin ![](https://api.travis-ci.org/BuildFire/emulatorPlugin.svg)
