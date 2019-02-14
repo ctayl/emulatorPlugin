@@ -20,7 +20,7 @@
 
   },
   "features":[
-
+    {"name" : "BarCodeScanner"}
    ],
    "languages":[
       "en"
