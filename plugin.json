@@ -1,10 +1,9 @@
 {
   "author":"BuildFire"
-  ,"pluginName":"App Previewer"
-  ,"pluginDescription":"The App Previewer plugin allows you to view any app under your account as you are building it out. You can even view it in draft mode to see your changes before you publish."
+  ,"pluginName":"App Previewer [QA - CHRIS]"
+  ,"pluginDescription":"The Draft Review plugin allows app owners to view apps under their account in draft mode to see changes before publishing."
   ,"supportEmail":"support@buildfire.com"
   ,"pluginIcon":"icon.png"
-  ,"licenseKey": "a4sd6-as654asd6as545a65s4d6a-65asd564a"
   ,"control":{
     "content":{
       "enabled":true
@@ -15,14 +14,9 @@
     , "settings":{
       "enabled":false
     }
-  }
-  ,"widget":{
-
   },
-  "features":[
-    {"name" : "BarCodeScanner"}
-   ],
-   "languages":[
-      "en"
-   ]
+  "widget":{},
+  "features":[],
+  "languages":[ "en" ],
+  "requireLogin" : true
 }

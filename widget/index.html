@@ -1,144 +1,38 @@
 ﻿<!DOCTYPE html>
-<html ng-app="emulatorPlugin">
+<html>
 <head lang="en">
     <meta charset="UTF-8">
-    <title>Text widget</title>
+    <meta name="buildfire" content="enableMDTheme, disableBootstrap">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Emulator Plugin</title>
 
-    <link href="../../../scripts/owlCarousel/owlCarousel.css" rel="stylesheet" />
+    <link href="../../../styles/appStyle.css" rel="stylesheet">
+    <link href="../../../styles/helper.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link href="../../../styles/materialDesign/material-components-web@4.0.0.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 
-    <script src="../../../scripts/angular/angular.min.js"></script>
-    <script src="../../../scripts/jquery/jquery-1.11.2.min.js"></script>
-    <script type="text/javascript" src="../../../scripts/buildfire.js"></script>
-    <script type="text/javascript" src="../../../scripts/owlCarousel/owlCarousel.js"></script>
-    <script src="../../../scripts/buildfire/components/carousel/carousel.js"></script>
-
+    <script type="text/javascript" src="../../../scripts/buildfire.min.js"></script>
 </head>
-<body ng-controller="emulatorPluginCtrl" ng-cloak data-ng-attr-style="background:url({{ cropImage(data.design.backgroundImage, {width: deviceWidth, height: deviceHeight}) }}) !important; background-size:cover;">
-    <style>
-        .owl-carousel .owl-controls .owl-dots {
-            text-align: center;
-        }		
-		.widget-content {
-			word-break: break-word;
-		}
-		.link-holder{
-			margin:0 auto 30px;
-			max-width:240px;
-		}
-    </style>
-    <div>
-        <div id="carousel"></div>
-        <div ng-bind-html="data.content.text" class="widget-content padded"></div>
-		<div class="link-holder">
-			<a class="btn btn-primary stretch" ng-click="navigateEmulator()">Load App</a>
-		</div>
+
+<body>
+    <section id="textContainer">
+        <!-- <div class="header">
+            <h1 class="header__title">Your Designs</h1>
+            <p class="header_subtitle body-text">You are reviewing your designs in draft mode. Some features will be disabled.</p>
+        </div> -->
+    </section>
+
+    <div id="scrollContainer" class="scrollable">
+        <div>
+            <div id="list" class="card__list"></div>
+        </div>
     </div>
-    <script>
-        var emulatorPluginApp = angular.module('emulatorPlugin', []);
-
-        emulatorPluginApp.controller('emulatorPluginCtrl', ['$scope', '$sce', function ($scope, $sce) {
-            var view = null;
-
-            $scope.deviceHeight = window.innerHeight;
-            $scope.deviceWidth = window.innerWidth;
-
-            $scope.data = {
-                content: {
-                    carouselImages: [],
-                    text: ""
-                },
-                design: {
-                    backgroundImage: null,
-                    backgroundBlur: 0,
-                    selectedLayout: 1
-                }
-            };
-
-            function initDeviceSize(callback) {
-                $scope.deviceHeight = window.innerHeight;
-                $scope.deviceWidth = window.innerWidth;
-                if ($scope.data.design.selectedLayout == 1) {
-                    $scope.sliderHeight = Math.ceil(9 * $scope.deviceWidth / 16);
-                } else {
-                    $scope.sliderHeight = Math.ceil(1 * $scope.deviceWidth / 2.39);
-                }
-
-                if (callback) {
-                    if ($scope.deviceWidth == 0 || $scope.deviceHeight == 0) {
-                        setTimeout(function () {
-                            initDeviceSize(callback);
-                        }, 500);
-                    } else {
-                        callback();
-                        if (!$scope.$$phase && !$scope.$root.$$phase) {
-                            $scope.$apply();
-                        }
-                    }
-                }
-            }
-
-            /*
-             * bind data to the scope
-             * */
-            function bind(data) {
-                $scope.data = data;
-                if (data && data.content && data.content.text) {
-                    $scope.data.content.text = $sce.trustAsHtml(data.content.text);
-                }
-
-                if ($scope.data.content && $scope.data.content.carouselImages) {
-                    initDeviceSize(function () {
-                        if (!view) {
-                            view = new buildfire.components.carousel.view("#carousel", $scope.data.content.carouselImages, $scope.data.design.selectedLayout == 1 ? "WideScreen" : "Cinema");
-                        } else {
-                            view.loadItems($scope.data.content.carouselImages, null, $scope.data.design.selectedLayout == 1 ? "WideScreen" : "Cinema");
-                        }
-                    });
-                }
-            }
-
-            /*
-             * Go pull saved data
-             * */
-            function loadData() {
-                buildfire.datastore.get(function (err, result) {
-                    if (result && result.data && !angular.equals({}, result.data)) bind(result.data);
-                });
-            }
-
-            loadData();
-
-            /**
-             * when a refresh is triggered get reload data
-             */
-            buildfire.datastore.onRefresh(loadData);
-
-            buildfire.datastore.onUpdate(function (e) {
-                bind(e.data);
-            });
-
-            $scope.cropImage = function (url, settings) {
-                var options = {};
-                if (!url) {
-                    return "";
-                }
-                else {
-                    if (settings.height) {
-                        options.height = settings.height;
-                    }
-                    if (settings.width) {
-                        options.width = settings.width;
-                    }
-                    return buildfire.imageLib.cropImage(url, options);
-                }
-            };
-
-            $scope.navigateEmulator = function() {
-                buildfire.navigation.navigateEmulator();
-            };
-
-        }]);
-    </script>
+    <div id="empty-state" class="hidden">
+        <img src="empty.svg" alt="empty box" />
+    </div>
+    <script type="text/javascript" src="widget.js"></script>
 </body>
 
 </html>

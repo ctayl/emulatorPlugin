@@ -1,144 +1,108 @@
 ﻿<!DOCTYPE html>
 <html ng-app="emulatorPlugin">
-<head lang="en">
-    <meta charset="UTF-8">
+	<head lang="en">
+		<meta charset="UTF-8" />
+		<meta name="buildfire" content="enableMDTheme, disableBootstrap" />
+		<!-- CSS -->
+		<link href="../../../../styles/helper.css" rel="stylesheet" />
+		<link href="../../../../styles/siteIcons.css" rel="stylesheet" />
 
-    <!-- CSS -->
-    <link href="../../../../styles/helper.css" rel="stylesheet">
-    <link href="../../../../styles/siteIcons.css" rel="stylesheet">
+		<!-- JS -->
+		<script src="../../../../scripts/buildfire.min.js"></script>
+		<script src="../../../../scripts/tinymce/tinymce.min.js"></script>
 
-    <!-- JS -->
-    <script src="../../../../scripts/buildfire.js"></script>
-    <script src="../../../../scripts/angular/angular.min.js"></script>
-    <script src="../../../../scripts/tinymce/tinymce.min.js"></script>
-    <script src="../../../../scripts/tinymce/ui-tinymce.js"></script>
+		<style>
+			body {
+				--bf-font-family: Muli, sans-serif !important;
+				font-family: 'Muli', sans-serif;
+				font-weight: 300;
+				color: #5f5f5f;
+				font-size: 14px;
+				line-height: 22px;
+				text-rendering: optimizeLegibility;
+				outline: none;
+				box-sizing: border-box;
+			}
 
-    <script src="../../../../scripts/jquery/jquery-1.11.2.min.js"></script>
-    <script src="../../../../scripts/sortable.min.js"></script>
-    <script src="../../../../scripts/buildfire/components/carousel/carousel.js"></script>
+			.col-md-3 {
+				padding-right: 0 !important;
+				position: relative;
+				min-height: 1px;
+				width: 25%;
+			}
+
+			hr.none {
+				outline: none;
+				box-sizing: content-box;
+				height: 0;
+				border: 0;
+				margin: 10px 0;
+				border-top: 1px solid transparent;
+			}
+		</style>
+	</head>
+
+	<body ng-controller="emulatorPluginCtrl" id="textApp">
+		<div ng-form="frmMain">
+			<div class="item clearfix row">
+				<div class="labels col-md-3 padding-right-zero pull-left">
+					<span>Header Content</span>
+				</div>
+			</div>
+			<hr class="none" />
+			<div class="item clearfix row">
+				<div class="main col-md-12 pull-left">
+					<textarea name="text" id="text" ui-tinymce="editorOptions" class="form-control" rows="5" width="100%"></textarea>
+				</div>
+			</div>
+		</div>
+
+		<script>
+
+			const text = (
+				`<div class="header">
+					<h1 class="header__title">Your Designs</h1>
+					<p class="header_subtitle body-text">You are reviewing your designs in draft mode. Some features will be disabled.</p>
+				</div>`
+			);
+
+			tinymce.init({
+				selector: '#text',
+				skin: 'lightgray',
+				theme: 'modern',
+				trusted: true,
+				plugins: 'advlist autolink link image lists charmap print preview',
+				setup: (editor) => {
+					let data = { text };
+					editor.on('load', () => {
+						buildfire.datastore.get((err, result) => {
+							if (err) return console.error('Error: ', err);
+
+							if (result && result.data && result.id) {
+								data = result.data;
+							}
+							tinymce.activeEditor.setContent(data.text);
+						});
+					});
+					editor.on('keyup', () => {
+						data.text = tinymce.activeEditor.getContent() || '';
+						saveDataWithDelay(data);
+					});
+				},
+			});
 
 
-</head>
-<body ng-controller="emulatorPluginCtrl" id="textApp">
-    <div ng-form="frmMain">
-        <div id="carousel"></div>
-		<hr class="none">
-        <div class="item clearfix row">
-            <div class="labels col-md-3 padding-right-zero pull-left">
-                <span>Text</span>
-            </div>
-        </div>
-        <hr class="none">
-        <div class="item clearfix row">
-            <div class="main col-md-12 pull-left">
-                <textarea id="text" ui-tinymce="editorOptions" class="form-control" rows="5" width="100%" ng-model="data.content.text"></textarea>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        var emulatorPluginApp = angular.module('emulatorPlugin', [ 'ui.tinymce' ]);
-
-        emulatorPluginApp.controller('emulatorPluginCtrl', ['$scope', function ($scope) {
-            var datastoreInitialized = false;
-
-            $scope.editorOptions = {
-                plugins: 'advlist autolink link image lists charmap print preview',
-                skin: 'lightgray',
-                trusted: true,
-                theme: 'modern'
-            };
-
-            $scope.data = {
-                content: {
-                    carouselImages: [],
-                    text: "<p>&nbsp;<br></p>"
-                },
-                design: {
-                    backgroundImage: null,
-                    backgroundBlur: 0,
-                    selectedLayout: 1
-                }
-            };
-
-            // create a new instance of the buildfire carousel editor
-            var editor = new buildfire.components.carousel.editor("#carousel");
-
-            /*
-             * Go pull any previously saved data
-             * */
-            buildfire.datastore.get(function (err, result) {
-
-                if (!err) {
-                    datastoreInitialized = true;
-                } else {
-                    console.error("Error: ", err);
-                    return;
-                }
-
-                if (result && result.data && !angular.equals({}, result.data)) {
-                    $scope.data = result.data;
-                    $scope.id = result.id;
-                    if($scope.data.content && $scope.data.content.carouselImages)
-                        editor.loadItems($scope.data.content.carouselImages);
-                    if (tmrDelay) clearTimeout(tmrDelay);
-                }
-
-                /*
-                 * watch for changes in data and trigger the saveDataWithDelay function on change
-                 * */
-                $scope.$watch('data', saveDataWithDelay, true);
-
-                if (!$scope.$$phase && !$scope.$root.$$phase) {
-                    $scope.$apply();
-                }
-            });
-
-            /*
-             * Call the datastore to save the data object
-             */
-            var saveData = function (newObj) {
-                if (!datastoreInitialized) {
-                    console.error("Error with datastore didn't get called");
-                    return;
-                }
-
-                if (newObj == undefined) return;
-
-                if ($scope.frmMain.$invalid) {
-                    console.warn('invalid data, details will not be saved');
-                    return;
-                }
-
-                buildfire.datastore.save(newObj, function (err, result) {
-                    if (err || !result) {
-                        console.error('Error saving the widget details: ', err);
-                    }
-                    else {
-                        console.info('Widget details saved');
-                    }
-                });
-            };
-
-            /*
-             * create an artificial delay so api isnt called on every character entered
-             * */
-            var tmrDelay = null;
-            var saveDataWithDelay = function (newObj, oldObj) {
-                if (tmrDelay) clearTimeout(tmrDelay);
-                if (angular.equals(newObj, oldObj)) return;
-                tmrDelay = setTimeout(function () {
-                    saveData(newObj);
-                }, 500);
-            };
-
-            // this method will be called when a new item added to the list
-            editor.onAddItems = editor.onDeleteItem = editor.onItemChange = editor.onOrderChange = function () {
-                $scope.data.content.carouselImages = editor.items;
-                saveData($scope.data);
-            };
-
-        }]);
-    </script>
-</body>
+			let tmrDelay = null;
+			function saveDataWithDelay(data) {
+				if (tmrDelay) clearTimeout(tmrDelay);
+				tmrDelay = setTimeout(() => saveData(data), 500);
+			};
+			function saveData(data) {
+				buildfire.datastore.save(data, (err, result) => {
+					if (err || !result) return console.error('Error saving the widget details: ', err);
+					console.info('Widget details saved');
+				});
+			};
+		</script>
+	</body>
 </html>
