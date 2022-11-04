@@ -15,6 +15,7 @@ section {
 
 .header__title {
 	font-size: 20px;
+  margin: initial !important;
 }
 
 .header__subtitle {
@@ -53,45 +54,69 @@ section {
 }
 
 .card__title {
-	padding-left: 15px;
+  margin: 0px 0px 0px 15px !important;
 	font-size: 14px;
 	font-weight: 700;
 }
 
-.card .card__img--holder {
+.card .card__img--holder, .card .card__img--holder .card__img.bf-skeleton-loader {
 	height: 64px;
 	width: 64px;
 	border-radius: 12px;
 	overflow: hidden;
 }
 
+body {
+  margin-top: -40px;
+}
+body.has-search:not(.animating) {
+  margin-top: 0px !important;
+}
+body.has-search.animating {
+  transform: translateY(40px);
+  -webkit-transform: translateY(40px);
+  transition-duration: 250ms;
+  -webkit-transition-duration: 250ms;
+  -webkit-transition: all 600ms cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+body.has-search #searchHeader {
+  opacity: 100 !important;
+  pointer-events: all !important;
+}
 
 /* Searchbar */
-.searchbar.mdc-text-field{
-  /* display: none; */
+#searchHeader {
+  opacity: 0;
+  pointer-events: none;
+}
+#searchHeader.active {
+  opacity: 100 !important;
+}
+.search-field.mdc-text-field {
+  width: 100%;
   height: auto;
   border: 0;
   overflow: visible;
   background-color: transparent;
 }
-.searchbar.mdc-text-field .mdc-text-field__input{
+.search-field.mdc-text-field .mdc-text-field__input {
+  font-size: 13px;
   border: 0 ;
   border-radius: .25rem;
-  padding: .75rem 1rem;
-  padding-left: 48px;
+  padding: .75rem 48px;
   background-color: rgba(255,255,255,.05);
   box-shadow: 0 .125rem .25rem .125rem rgba(150,150,150,.2);
   opacity: 1;
 }
-.mdc-text-field::before, .mdc-text-field::after{
+.mdc-text-field::before, .mdc-text-field::after {
   background-color: transparent;
 }
-.searchbar.mdc-text-field .mdc-text-field__input::placeholder{
+.search-field.mdc-text-field .mdc-text-field__input::placeholder {
   color: inherit;
   opacity: .5;
 }
-.action-item-block p {
-  font-size: 14px;
+.search-field .mdc-text-field__icon {
+  font-size: 22px;
 }
 .fixed-footer-block {
   display: flex;
@@ -111,6 +136,9 @@ footer {
   align-items: center;
   justify-content: center;
   flex-direction: column;
+}
+.search-field .mdc-text-field__icon {
+  font-size: 22px;
 }
 
 @media(min-width: 700px) {

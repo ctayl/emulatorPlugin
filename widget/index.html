@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="buildfire" content="enableMDTheme, disableBootstrap">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
+
     <title>Emulator Plugin</title>
 
     <link href="../../../styles/appStyle.css" rel="stylesheet">
@@ -12,22 +12,27 @@
     <link rel="stylesheet" href="styles.css">
     <link href="../../../styles/materialDesign/material-components-web@4.0.0.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-
+    <link rel="stylesheet" href="../../../styles/components/skeleton.css" />
+    
     <script type="text/javascript" src="../../../scripts/buildfire.min.js"></script>
+    <script src="../../../scripts/buildfire/components/skeleton/skeleton.js"></script>
 </head>
-
 <body>
+    <header id="searchHeader">
+        <label class="mdc-text-field mdc-text-field--with-leading-icon mdc-text-field--with-trailing-icon mdc-text-field__icon--trailing search-field mdc-theme--text-body">
+            <i class="material-icons mdc-text-field__icon mdc-theme--text-icon-on-background" tabindex="0" role="button" id="searchLocationsBtn">search</i>
+            <input id="searchInput" aria-labelledby="searchTextField" autocomplete="off" bfstring="general.search" class="mdc-text-field__input mdc-theme--primary" id="searchTextField" placeholder="Search" type="text">
+        </label>
+    </header>
     <section id="textContainer">
-        <!-- <div class="header">
-            <h1 class="header__title">Your Designs</h1>
-            <p class="header_subtitle body-text">You are reviewing your designs in draft mode. Some features will be disabled.</p>
-        </div> -->
-    </section>
-
-    <div id="scrollContainer" class="scrollable">
-        <div>
-            <div id="list" class="card__list"></div>
+        <div class="header bf-wysiwyg-top bf-skeleton-container">
+            <h1 class="header__title bf-skeleton-loader skeleton-heading skeleton-card-heading"></h1>
+            <p class="header_subtitle body-text bf-skeleton-loader skeleton-text"></p>
+            <p class="header_subtitle body-text bf-skeleton-loader skeleton-text"></p>
         </div>
+    </section>
+    <div id="scrollContainer" class="scrollable bf-skeleton-container">
+        <div id="list" class="card__list"></div>
     </div>
     <div id="empty-state" class="hidden">
         <img src="empty.svg" alt="empty box" />
