@@ -1,12 +1,8 @@
 const widget = {
 
-	// config: {
-	// 	endpoint: 'https://app.buildfire.com/api/auth/user/apps',
-	// 	env: 'prod'
-	// },
 	config: {
-		endpoint: 'https://uat2-app.buildfire.com/api/auth/user/apps',
-		env: 'uat'
+		endpoint: 'https://app.buildfire.com/api/auth/user/apps',
+		env: 'prod'
 	},
 
 	searchInput: document.getElementById('searchInput'),
@@ -39,9 +35,9 @@ const widget = {
 
 		this.searchInput.onchange = ({ target }) => {
 			if (target.value.length > 0 && target.value.length < 4) return;
-			console.error(target.value);
 			clearTimeout(this.timeout);
 			this.appContainer.innerHTML = '';
+			this.appContainer.innerHTML += this.getSkeletons().appList();
 			this.apps = [];
 			this.pageIndex = 0;
 			this.done = false;	
@@ -119,9 +115,6 @@ const widget = {
 			this.busy = false;
 		}
 		this.search(options, handleResponse);
-		// setTimeout(() => {
-		// 	this.search(options, handleResponse);
-		// }, 2000);
 	},
 
 	autoNavigate(app) {
@@ -240,7 +233,7 @@ const widget = {
 						<div class="card__img--holder">
 							<div class="card__img bf-skeleton-loader"></div>
 						</div>
-						<h4 class="card__title bf-skeleton-loader skeleton-text"></h4>
+						<h4 class="card__title bf-skeleton-loader"></h4>
 					</div>`
 				);
 				let result = '';

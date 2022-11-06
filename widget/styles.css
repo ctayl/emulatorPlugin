@@ -15,8 +15,12 @@ section {
 
 .header__title {
 	font-size: 20px;
-  margin: initial !important;
 }
+.header__title.bf-skeleton-loader {
+  border-radius: 12px;
+  height: 24px;
+  width: 45%;
+} 
 
 .header__subtitle {
 
@@ -54,9 +58,15 @@ section {
 }
 
 .card__title {
-  margin: 0px 0px 0px 15px !important;
+  margin-left: 15px;
 	font-size: 14px;
 	font-weight: 700;
+}
+
+.card__title.bf-skeleton-loader, .header_subtitle.bf-skeleton-loader {
+  flex: 1 0 auto;
+  border-radius: 6px;
+  height: 14px;
 }
 
 .card .card__img--holder, .card .card__img--holder .card__img.bf-skeleton-loader {
