@@ -20,11 +20,12 @@ const widget = {
 	pageSize: 10,
 	done: false,
 	timeout: null,
+	searchValue: null,
 
 	text: `<div class="header">
-					<h1 class="header__title">Your Designs</h1>
-					<p class="header_subtitle body-text">You are reviewing your designs in draft mode. Some features will be disabled.</p>
-				</div>`,
+				<h1 class="header__title">Your Designs</h1>
+				<p class="header_subtitle body-text">You are reviewing your designs in draft mode. Some features will be disabled.</p>
+			</div>`,
 
 	init() {
 
@@ -33,23 +34,26 @@ const widget = {
 		buildfire.datastore.get(this.loadData);
 		buildfire.datastore.onUpdate(obj => this.loadData(null, obj), false);
 
-		this.searchInput.onchange = ({ target }) => {
+		this.searchInput.onkeyup = ({ target }) => {
 			if (target.value.length > 0 && target.value.length < 4) return;
+			if (!this.searchValue && !target.value.length) return;
+
 			clearTimeout(this.timeout);
-			this.appContainer.innerHTML = '';
-			this.appContainer.innerHTML += this.getSkeletons().appList();
-			this.apps = [];
-			this.pageIndex = 0;
-			this.done = false;	
-		  
 			this.timeout = setTimeout(() => {
+				this.searchValue = target.value;
+				this.appContainer.innerHTML = '';
+				this.appContainer.innerHTML += this.getSkeletons().appList();
+				this.apps = [];
+				this.pageIndex = 0;
+				this.done = false;	
+
 				this.timeout = null;
 				this.busy = false;
 				this.searchApps(target.value);
-			}, 300);
+			}, 500);
 		};
 
-		this.searchApps();
+		this.searchApps(null, true);
 
 		buildfire.deeplink.getData(dld => {
 			const { appId, env, appName } = dld || {};
@@ -65,12 +69,9 @@ const widget = {
 		if (obj && obj.data && typeof obj.data.text === 'string') {
 			widget.text = obj.data.text;
 		}
-
-		widget.textContainer.innerHTML = widget.text;
-		widget.appContainer.innerHTML = widget.getSkeletons().appList();
 	},
 
-	searchApps(query) {
+	searchApps(query, initial) {
 		if (this.busy) return;
 		this.busy = true;
 
@@ -95,24 +96,24 @@ const widget = {
 			}
 			if (!this.apps.length && !query && data.length === this.pageSize && this.pageIndex === 0) {
 				this.searchHeader.classList.add('active');
-				// strip off animations once they end
-				document.body.addEventListener('transitionend', () => {
-					document.body.classList.remove('animating');
-				}, { once: true });
-				
-				// slide in search bar
-				document.body.classList.add('has-search', 'animating');
 			}
 			if (!query && data.length === 1 && this.pageIndex === 0) {
-				// only auto navigate on initial his
+				// only auto navigate on initial hits
 				this.autoNavigate(data[0]);
 				this.done = true;
 			}
-			if (this.apps.length === 0) this.appContainer.innerHTML = '';
-			else widget.appContainer.removeChild(widget.appContainer.querySelector('.skeleton'));
+
+			if (!this.apps.length && !data.length) this.emptyState.classList.add('active');
+			if (data.length) this.emptyState.classList.remove('active');
+
+            for (skeleton of (this.appContainer.querySelectorAll('.skeleton'))) {
+                this.appContainer.removeChild(skeleton);
+            };
+
 			this.renderApps(data);
 			this.pageIndex += 1;
 			this.busy = false;
+			if (initial) widget.textContainer.innerHTML = widget.text;
 		}
 		this.search(options, handleResponse);
 	},
