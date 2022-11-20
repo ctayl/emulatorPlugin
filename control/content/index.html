@@ -84,7 +84,11 @@
 							tinymce.activeEditor.setContent(data.text);
 						});
 					});
-					editor.on('keyup', () => {
+					editor.on('input', () => {
+						data.text = tinymce.activeEditor.getContent() || '';
+						saveDataWithDelay(data);
+					});
+					editor.on('ExecCommand', function(e) {
 						data.text = tinymce.activeEditor.getContent() || '';
 						saveDataWithDelay(data);
 					});

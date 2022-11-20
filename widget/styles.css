@@ -75,6 +75,7 @@ section {
 /* Searchbar */
 #searchHeader {
   display: none;
+  max-height: 55px;
 }
 #searchHeader.active {
   display: initial !important;

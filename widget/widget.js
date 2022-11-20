@@ -32,24 +32,30 @@ const widget = {
 		this.appContainer.innerHTML = this.getSkeletons().appList();
 
 		buildfire.datastore.get(this.loadData);
-		buildfire.datastore.onUpdate(obj => this.loadData(null, obj), false);
+		buildfire.datastore.onUpdate(obj => {
+			this.loadData(null, obj);
+			this.textContainer.innerHTML = this.text;
+		}, false);
 
 		this.searchInput.onkeyup = ({ target }) => {
+			if (typeof this.timeout == 'number') {
+				clearTimeout(this.timeout);
+				this.timeout = null;
+			}
 			if (target.value.length > 0 && target.value.length < 4) return;
 			if (!this.searchValue && !target.value.length) return;
+			if (this.searchValue === target.value) return;
 
-			clearTimeout(this.timeout);
 			this.timeout = setTimeout(() => {
 				this.searchValue = target.value;
-				this.appContainer.innerHTML = '';
-				this.appContainer.innerHTML += this.getSkeletons().appList();
 				this.apps = [];
 				this.pageIndex = 0;
 				this.done = false;	
 
 				this.timeout = null;
 				this.busy = false;
-				this.searchApps(target.value);
+				buildfire.spinner.show();
+				this.searchApps(target.value, false, true);
 			}, 500);
 		};
 
@@ -71,7 +77,7 @@ const widget = {
 		}
 	},
 
-	searchApps(query, initial) {
+	searchApps(query, initial, refresh) {
 		if (this.busy) return;
 		this.busy = true;
 
@@ -110,10 +116,15 @@ const widget = {
                 this.appContainer.removeChild(skeleton);
             };
 
+			if (initial) widget.textContainer.innerHTML = widget.text;
+			else if (query || refresh) {
+				this.apps = [];
+				this.appContainer.innerHTML = '';
+			} 
+			buildfire.spinner.hide();
 			this.renderApps(data);
 			this.pageIndex += 1;
 			this.busy = false;
-			if (initial) widget.textContainer.innerHTML = widget.text;
 		}
 		this.search(options, handleResponse);
 	},
