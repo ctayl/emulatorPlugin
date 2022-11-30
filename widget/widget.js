@@ -89,7 +89,7 @@ const widget = {
 
 		if (query) options.appName = query;
 		else if (this.apps.length) {
-			this.appContainer.innerHTML += this.getSkeletons().appList(1);
+			buildfire.spinner.show();
 		}
 
 		const handleResponse = (error, response = {}) => {
@@ -115,6 +115,8 @@ const widget = {
             for (skeleton of (this.appContainer.querySelectorAll('.skeleton'))) {
                 this.appContainer.removeChild(skeleton);
             };
+
+			buildfire.spinner.hide();
 
 			if (initial) widget.textContainer.innerHTML = widget.text;
 			else if (query || refresh) {

@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿<!-- This plugin will not function on non-federated apps -->
+<!DOCTYPE html>
 <html ng-app="emulatorPlugin">
 	<head lang="en">
 		<meta charset="UTF-8" />
@@ -39,6 +40,15 @@
 				margin: 10px 0;
 				border-top: 1px solid transparent;
 			}
+			p.info-note {
+				background-color: #ececec;
+				line-height: 1.33;
+				color: 
+				#808080;
+				padding: 0.5rem 1rem;
+				margin-bottom: 1.5rem;
+				border-radius: 0.25rem;
+			}
 		</style>
 	</head>
 
@@ -56,6 +66,8 @@
 				</div>
 			</div>
 		</div>
+
+		<p class="info-note">This plugin will not function on non-federated apps</p>
 
 		<script>
 
@@ -84,11 +96,7 @@
 							tinymce.activeEditor.setContent(data.text);
 						});
 					});
-					editor.on('keyup', () => {
-						data.text = tinymce.activeEditor.getContent() || '';
-						saveDataWithDelay(data);
-					});
-					editor.on('ExecCommand', function(e) {
+					editor.on('change keyup', () => {
 						data.text = tinymce.activeEditor.getContent() || '';
 						saveDataWithDelay(data);
 					});
